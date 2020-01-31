@@ -31,7 +31,11 @@ for week in base_table.getchildren():
             date_header['href'].replace('#', '')
         ).date
 
-        # holy shit the text is nested 9 tags deep and theres nested html 
+        # holy shit the text is nested 9 tags deep and theres nested html
+        # day.getchildren()[1].getchildren()[0].attrib['title'] has the html
+        # if the tag with the time range has an image,  that is one of the key words
+        # that image is not in the nested.
+        # day.getchildren()[1].getchildren()[0]
         
 
 
