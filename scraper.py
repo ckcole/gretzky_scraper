@@ -30,12 +30,34 @@ for week in base_table.getchildren():
         parsed_date = datetime.fromisoformat(
             date_header['href'].replace('#', '')
         ).date
+        for clinic in day.find_class("rsApt rsAptColor"):
+            # the data is html in string form in the "title" of attributes
+            nested_tree = html.fromstring(clinic.attrib['title'])
+            # nested_tree children index, attrib, text
+            # 0 {'class': 'wrToolTipHeader'} Gretzky Hour
+            # 1 {'class': 'wrToolTipTime'} 1/3/20  1:45 PM - 3:15 PM
+            # 2 {'class': 'wrToolTipHeaderBorder clear'} None
+            # 3 {'class': 'wrToolTipLabel clear'} Description:
+            # 4 {'class': 'wrToolTipValue clear'} Stick time for players
+            # 5 {'class': 'wrToolTipLabel clear'} Fees:
+            # 6 {'class': 'wrToolTipValue clear'} Gretzky Hour - 1.5 Hour $16.00
+            # 7 {} None
+            # 8 {'class': 'wrToolTipLabel clear'} Available Openings: 16
+            clinic_data = nested_tree.getchildren()
+            start, end = clinic_data[1].text.split(' - ')
+            start = datetime.strptime(start, "%m/%d/%y %I:%M %p").time()
+            end = datetime.strptime(end, "%I:%M %p").time()
+            available_openings = int(clinic_data[8].text.split(': ')[1])
+            raise(Exception('breaking to look at data'))
 
         # holy shit the text is nested 9 tags deep and theres nested html
         # day.getchildren()[1].getchildren()[0].attrib['title'] has the html
         # if the tag with the time range has an image,  that is one of the key words
         # that image is not in the nested.
         # day.getchildren()[1].getchildren()[0]
+
+        # to extract the first part of the time:
+        # datetime.strptime('1/3/20 1:45 PM', "%m/%d/%y %I:%M %p")
         
 
 
