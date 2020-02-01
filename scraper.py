@@ -12,7 +12,7 @@ from lxml import html
 from datetime import datetime
 
 
-with open('test_reg.html', 'r') as f:
+with open('test_reg_dropin.html', 'r') as f:
     txt = f.read()
 tree = html.fromstring(txt)
 
@@ -29,7 +29,7 @@ for week in base_table.getchildren():
         # strip/parse date string and cast datetime > date
         parsed_date = datetime.fromisoformat(
             date_header['href'].replace('#', '')
-        ).date
+        ).date()
         for clinic in day.find_class("rsApt rsAptColor"):
             # the data is html in string form in the "title" of attributes
             nested_tree = html.fromstring(clinic.attrib['title'])
@@ -48,17 +48,25 @@ for week in base_table.getchildren():
             start = datetime.strptime(start, "%m/%d/%y %I:%M %p").time()
             end = datetime.strptime(end, "%I:%M %p").time()
             available_openings = int(clinic_data[8].text.split(': ')[1])
-            raise(Exception('breaking to look at data'))
+            meta = clinic_data[6]
+            image_tags = [x.attrib['alt'] for x in clinic.findall('*//img')
 
-        # holy shit the text is nested 9 tags deep and theres nested html
-        # day.getchildren()[1].getchildren()[0].attrib['title'] has the html
-        # if the tag with the time range has an image,  that is one of the key words
-        # that image is not in the nested.
-        # day.getchildren()[1].getchildren()[0]
 
-        # to extract the first part of the time:
-        # datetime.strptime('1/3/20 1:45 PM', "%m/%d/%y %I:%M %p")
-        
+            if parsed_date == datetime(2020, 1, 3).date():
+                raise(Exception('breaking to look at data'))
+
+
+
+
+# holy shit the text is nested 9 tags deep and theres nested html
+# day.getchildren()[1].getchildren()[0].attrib['title'] has the html
+# if the tag with the time range has an image,  that is one of the key words
+# that image is not in the nested.
+
+
+# to extract the first part of the time:
+# datetime.strptime('1/3/20 1:45 PM', "%m/%d/%y %I:%M %p")
+
 
 
 # tree.find_class('rsContent rsMonthView')
