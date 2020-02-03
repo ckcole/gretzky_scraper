@@ -10,6 +10,7 @@
 
 from lxml import html
 from datetime import datetime
+import json
 
 
 with open('test_reg_dropin.html', 'r') as f:
@@ -18,6 +19,7 @@ tree = html.fromstring(txt)
 
 # Spot to start iterating.
 # children are 5 rows (weeks) of <tr>
+clinics = []
 base_table = tree.find_class('rsContentTable')[0]
 for week in base_table.getchildren():
     # week (obviously) has 7 (days) of <td>
@@ -31,6 +33,8 @@ for week in base_table.getchildren():
             date_header['href'].replace('#', '')
         ).date()
         for clinic in day.find_class("rsApt rsAptColor"):
+            # initialize the clinic's dictionary with the date field
+            clinic_dict = {'date': parsed_date.isoformat()}
             # the data is html in string form in the "title" of attributes
             nested_tree = html.fromstring(clinic.attrib['title'])
             # nested_tree children index, attrib, text
@@ -45,16 +49,18 @@ for week in base_table.getchildren():
             # 8 {'class': 'wrToolTipLabel clear'} Available Openings: 16
             clinic_data = nested_tree.getchildren()
             start, end = clinic_data[1].text.split(' - ')
-            start = datetime.strptime(start, "%m/%d/%y %I:%M %p").time()
-            end = datetime.strptime(end, "%I:%M %p").time()
-            available_openings = int(clinic_data[8].text.split(': ')[1])
-            meta = clinic_data[6]
-            image_tags = [x.attrib['alt'] for x in clinic.findall('*//img')
+            clinic_dict['start'] = datetime.strptime(start, "%m/%d/%y %I:%M %p").time().isoformat()
+            clinic_dict['end'] = datetime.strptime(end, "%I:%M %p").time().isoformat()
+            clinic_dict['available_openings'] = int(clinic_data[8].text.split(': ')[1])
+            clinic_dict['meta'] = clinic_data[6].text
+            clinic_dict['tags'] = [x.attrib['alt'] for x in clinic.findall('*//img')]
+            clinics.append(clinic_dict)
 
+#             if parsed_date == datetime(2020, 1, 3).date():
+#                 raise(Exception('breaking to look at data'))
 
-            if parsed_date == datetime(2020, 1, 3).date():
-                raise(Exception('breaking to look at data'))
-
+with open('output.json', 'w') as f:
+    f.write(json.dumps(clinics))
 
 
 
