@@ -5,9 +5,12 @@ scraping oakland ice website
 # TODO
 
  - scrape
-	 - [ ]  extract timestamps
-	 - [ ] extract available slots
-	 - [ ] extract keywords (full, etc.)
+	 - [x]  extract timestamps
+	 - [x] extract available slots
+	 - [x] extract keywords (full, etc.)
+ - tests
+ 	 - [ ] Hold html in test file location
+	 - [ ] call parser should run the test
  - compare
 	 - [ ] basic store of timestamp list
 	 - [ ] define new times

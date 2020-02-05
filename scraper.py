@@ -63,6 +63,7 @@ else:
                 if parsed_date == datetime(2020, 1, 3).date():
                     raise(Exception('breaking to look at data'))
 
+
 with open('output.json', 'w') as f:
     f.write(json.dumps(clinics))
 
